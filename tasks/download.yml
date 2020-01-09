@@ -11,6 +11,7 @@
         dest: /tmp/gpg-tmp
         state: directory
         mode: 0700
+      become: false
 
     - name: Download riot v{{ riot_version }}
       get_url:
@@ -32,6 +33,7 @@
       until: get_riot_gpg_key.rc == 0
       retries: 10
       delay: 2
+      become: false
 
     - name: "Verify riot v{{ riot_version }}'s signature"  # noqa 301
       command: >-
@@ -41,6 +43,7 @@
         --verify /tmp/riot-v{{ riot_version }}.tar.gz.asc
         /tmp/riot-v{{ riot_version }}.tar.gz
       register: riot_tarball_verification
+      become: false
 
     - name: Unpack riot
       unarchive:
@@ -53,4 +56,5 @@
       file:
         dest: /tmp/gpg-tmp
         state: absent
+      become: false
   when: not riot_app_directory.stat.exists
